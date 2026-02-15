@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import PDFUpload from '../components/PDFUpload';
+import FlashcardsList from '../components/FlashcardsList';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -52,13 +53,16 @@ export default function Dashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="bg-gradient-to-br from-blue-50 to-indigo-50 max-w-6xl mx-auto p-8">
+      <main className="bg-gradient-to-br from-blue-50 to-indigo-50 max-w-6xl mx-auto p-8 space-y-12">
         <section className="space-y-6">
           <h2 className="text-2xl font-bold text-gray-800">PDF-Lehrbücher hochladen</h2>
           <p className="text-gray-600">
             Lade deine türkischen Lehrbücher als PDF hoch, um sie für dein Training zu nutzen.
           </p>
           <PDFUpload />
+        </section>
+        <section>
+          <FlashcardsList />
         </section>
       </main>
     </div>

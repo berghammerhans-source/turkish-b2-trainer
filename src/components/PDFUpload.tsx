@@ -203,21 +203,18 @@ export default function PDFUpload() {
       });
 
       if (invokeError) throw invokeError;
-      if (data?.error) throw new Error(typeof data.error === 'string' ? data.error : data.error?.message ?? 'Unbekannter Fehler');
+      const errorMsg = data?.error;
+      if (errorMsg) {
+        throw new Error(typeof errorMsg === 'string' ? errorMsg : (errorMsg as { message?: string })?.message ?? 'Unbekannter Fehler');
+      }
 
-      const parsed = (data ?? {}) as {
-        chapters?: Array<{
-          number: number;
-          title: string;
-          grammar?: Array<{ question_de: string; answer_tr: string; explanation_de?: string }>;
-          vocabulary?: Array<{ question_de: string; answer_tr: string; explanation_de?: string }>;
-        }>;
-      };
-      const chapters = parsed?.chapters ?? [];
+      const responseData = data?.data ?? data;
+      const chapters = responseData?.chapters ?? [];
+
       const flashcardsToInsert: Array<{
         user_id: string;
         source_pdf_id: string;
-        type: 'grammar' | 'vocabulary';
+        card_type: 'grammar' | 'vocabulary';
         question_de: string;
         answer_tr: string;
         explanation_de: string | null;
@@ -225,34 +222,39 @@ export default function PDFUpload() {
         chapter_title: string | null;
       }> = [];
 
-      for (const ch of chapters) {
-        const num = ch.number ?? null;
-        const title = ch.title ?? null;
-        for (const g of ch.grammar ?? []) {
-          if (g.question_de && g.answer_tr) {
+      for (let i = 0; i < chapters.length; i++) {
+        const ch = chapters[i];
+        const chapterNumber = i + 1;
+        const chapterTitle = ch?.title ?? null;
+        for (const g of ch?.grammar ?? []) {
+          const questionDe = g?.point?.trim() ?? '';
+          const answerTr = g?.examples?.[0] ?? '';
+          if (questionDe) {
             flashcardsToInsert.push({
               user_id: userId,
               source_pdf_id: pdfId,
-              type: 'grammar',
-              question_de: g.question_de,
-              answer_tr: g.answer_tr,
-              explanation_de: g.explanation_de ?? null,
-              chapter_number: num,
-              chapter_title: title,
+              card_type: 'grammar',
+              question_de: questionDe,
+              answer_tr: answerTr,
+              explanation_de: g?.german_explanation?.trim() ?? null,
+              chapter_number: chapterNumber,
+              chapter_title: chapterTitle,
             });
           }
         }
-        for (const v of ch.vocabulary ?? []) {
-          if (v.question_de && v.answer_tr) {
+        for (const v of ch?.vocabulary ?? []) {
+          const questionDe = v?.word?.trim() ?? '';
+          const answerTr = v?.translation_german?.trim() ?? '';
+          if (questionDe && answerTr) {
             flashcardsToInsert.push({
               user_id: userId,
               source_pdf_id: pdfId,
-              type: 'vocabulary',
-              question_de: v.question_de,
-              answer_tr: v.answer_tr,
-              explanation_de: v.explanation_de ?? null,
-              chapter_number: num,
-              chapter_title: title,
+              card_type: 'vocabulary',
+              question_de: questionDe,
+              answer_tr: answerTr,
+              explanation_de: v?.example?.trim() ?? null,
+              chapter_number: chapterNumber,
+              chapter_title: chapterTitle,
             });
           }
         }
@@ -280,7 +282,17 @@ export default function PDFUpload() {
       );
       setTimeout(() => setSuccessMessage(null), 5000);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : getGermanError(err);
+      let msg: string;
+      if (err instanceof Error) {
+        msg = err.message;
+      } else if (typeof err === 'string') {
+        msg = err;
+      } else if (err && typeof err === 'object' && 'message' in err) {
+        msg = String((err as { message: unknown }).message);
+      } else {
+        const fallback = getGermanError(err);
+        msg = fallback === '[object Object]' ? 'Unbekannter Fehler' : fallback;
+      }
       setError(`${filename}: ${msg}`);
       setPdfs((prev) =>
         prev.map((p) => (p.id === pdfId ? { ...p, status: 'error' } : p))
