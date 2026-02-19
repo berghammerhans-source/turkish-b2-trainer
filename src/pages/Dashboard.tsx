@@ -45,7 +45,7 @@ export default function Dashboard() {
             <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
               <span className="text-white text-lg font-bold">TR</span>
             </div>
-            <h1 className="text-xl font-bold text-white">🌙 Turkish B2→C1 Trainer ⭐</h1>
+            <h1 className="text-xl font-bold text-white">🌙 Turkish B1→C1 Trainer ⭐</h1>
           </div>
           <button
             type="button"
