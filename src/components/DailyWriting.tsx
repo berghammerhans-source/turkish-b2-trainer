@@ -144,7 +144,6 @@ export function DailyWriting() {
         onChange={(e) => setUserText(e.target.value)}
         className="w-full h-64 p-4 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-red-500"
         placeholder="Schreibe hier auf Türkisch..."
-        disabled={loading || analysis !== null}
       />
 
       <div className="flex justify-between items-center mb-6">
