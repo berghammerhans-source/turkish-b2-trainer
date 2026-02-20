@@ -76,21 +76,18 @@ export default function Auth() {
         justifyContent: 'space-between',
         padding: '48px',
       }}>
-        {/* Turkish flag symbol - properly sized and centered */}
+        {/* Turkish flag symbol - centered watermark */}
         <div style={{
           position: 'absolute',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          display: 'flex',
-          alignItems: 'center',
+          fontSize: '200px',
+          color: 'white',
           opacity: 0.15,
           pointerEvents: 'none',
           userSelect: 'none',
-        }}>
-          <span style={{ fontSize: '320px', color: 'white', lineHeight: 1 }}>☽</span>
-          <span style={{ fontSize: '100px', color: 'white', lineHeight: 1, marginLeft: '-20px', marginBottom: '40px' }}>★</span>
-        </div>
+        }}>☽★</div>
 
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative', zIndex: 1 }}>
@@ -134,9 +131,10 @@ export default function Auth() {
       {/* ── RIGHT: Form panel ── */}
       <div style={{
         width: '50%',
+        height: '100vh',
         display: 'flex',
-        justifyContent: 'center',
         alignItems: 'center',
+        justifyContent: 'center',
         padding: '48px',
       }}>
         <div style={{ width: '100%', maxWidth: '420px' }}>
