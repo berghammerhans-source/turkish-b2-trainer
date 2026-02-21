@@ -79,7 +79,7 @@ export default function Dashboard() {
             </button>
           ))}
         </nav>
-        <div className="p-3 border-t border-dark/[0.06] space-y-2">
+        <div className="p-3 pt-3 pb-8 border-t border-dark/[0.06] space-y-2">
           <button
             type="button"
             onClick={handleLogout}

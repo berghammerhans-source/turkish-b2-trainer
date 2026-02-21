@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import {
   PenLine,
@@ -58,6 +58,13 @@ export function DailyWriting({ onWritingFocusChange }: DailyWritingProps) {
   const [analysis, setAnalysis] = useState<WritingAnalysis | null>(null);
 
   const wordCount = userText.split(/\s+/).filter((w) => w).length;
+  const firstCorrectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (analysis?.corrections?.length && firstCorrectionRef.current) {
+      firstCorrectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [analysis]);
 
   const handleSubmit = async () => {
     if (useCustomTopic && !customTopic.trim()) {
@@ -208,20 +215,28 @@ export function DailyWriting({ onWritingFocusChange }: DailyWritingProps) {
         <div className="flex flex-col gap-8">
           {/* Corrections */}
           {analysis.corrections && analysis.corrections.length > 0 && (
-            <div className="bg-white border-l-4 border-brand p-6 rounded-xl shadow-sm">
+            <div
+              ref={firstCorrectionRef}
+              className="bg-white border-l-4 border-brand/30 p-6 rounded-xl shadow-sm"
+            >
               <h3 className="font-display text-xl font-bold mb-4 text-dark flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-dark/40 shrink-0" />
+                <AlertCircle className="w-5 h-5 text-gold shrink-0" />
                 Korrekturen ({analysis.corrections.length})
               </h3>
               <div className="space-y-3">
                 {analysis.corrections.map((c, i) => (
-                  <div key={i} className="bg-red-50 p-3 rounded">
-                    <div className="flex items-start gap-2 mb-1">
-                      <span className="text-xs bg-red-200 text-red-800 px-2 py-1 rounded">{c.type}</span>
+                  <div key={i} className="bg-white p-4 rounded-btn border border-cream-dark/10">
+                    <div className="flex items-start gap-2 mb-2">
+                      <span className="text-xs bg-gold/10 text-gold px-2 py-1 rounded font-sans font-medium">
+                        {c.type}
+                      </span>
                     </div>
-                    <p className="text-red-600 line-through mb-1">{c.original}</p>
-                    <p className="text-green-600 font-semibold mb-1">✓ {c.corrected}</p>
-                    <p className="text-gray-600 text-sm">{c.explanation_de}</p>
+                    <p className="text-dark/60 line-through mb-1 font-sans text-base">{c.original}</p>
+                    <p className="text-brand font-semibold mb-2 font-sans text-base flex items-center gap-1.5">
+                      <Check className="w-4 h-4 text-gold shrink-0" />
+                      {c.corrected}
+                    </p>
+                    <p className="text-dark/60 text-sm font-sans">{c.explanation_de}</p>
                   </div>
                 ))}
               </div>
@@ -230,72 +245,89 @@ export function DailyWriting({ onWritingFocusChange }: DailyWritingProps) {
 
           {/* Variants */}
           {analysis.variants && (
-            <div className="bg-white border-l-4 border-brand p-6 rounded-xl shadow-sm">
+            <div className="bg-white border-l-4 border-brand/30 p-6 rounded-xl shadow-sm">
               <h3 className="font-display text-xl font-bold mb-4 text-dark flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-dark/40 shrink-0" />
+                <Sparkles className="w-5 h-5 text-gold shrink-0" />
                 3 Varianten
               </h3>
-              <div className="mb-4">
-                <h4 className="font-sans font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
-                  <Briefcase className="w-4 h-4 text-dark/40 shrink-0" />
-                  Business Formell
-                </h4>
-                <p className="bg-cream/50 p-3 rounded-btn font-sans">{analysis.variants.business_formal}</p>
-              </div>
-              <div className="mb-4">
-                <h4 className="font-sans font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
-                  <MessageCircle className="w-4 h-4 text-dark/40 shrink-0" />
-                  Schlagfertig Alltag
-                </h4>
-                <p className="bg-cream/50 p-3 rounded-btn font-sans">{analysis.variants.colloquial_smart}</p>
-              </div>
-              <div>
-                <h4 className="font-sans font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
-                  <GraduationCap className="w-4 h-4 text-dark/40 shrink-0" />
-                  C1 Sophistiziert
-                </h4>
-                <p className="bg-cream/50 p-3 rounded-btn font-sans">{analysis.variants.c1_sophisticated}</p>
+              <div className="space-y-4">
+                <div>
+                  <span className="inline-block text-xs font-medium bg-gold/10 text-gold px-2.5 py-1 rounded mb-2 font-sans">
+                    Formal
+                  </span>
+                  <p className="text-base leading-relaxed text-dark/90 font-sans bg-cream/40 p-4 rounded-btn">
+                    {analysis.variants.business_formal}
+                  </p>
+                </div>
+                <div>
+                  <span className="inline-block text-xs font-medium bg-gold/10 text-gold px-2.5 py-1 rounded mb-2 font-sans">
+                    Vivid
+                  </span>
+                  <p className="text-base leading-relaxed text-dark/90 font-sans bg-cream/40 p-4 rounded-btn">
+                    {analysis.variants.colloquial_smart}
+                  </p>
+                </div>
+                <div>
+                  <span className="inline-block text-xs font-medium bg-gold/10 text-gold px-2.5 py-1 rounded mb-2 font-sans">
+                    C1
+                  </span>
+                  <p className="text-base leading-relaxed text-dark/90 font-sans bg-cream/40 p-4 rounded-btn">
+                    {analysis.variants.c1_sophisticated}
+                  </p>
+                </div>
               </div>
             </div>
           )}
 
           {/* Deyimler */}
           {analysis.suggested_deyimler && analysis.suggested_deyimler.length > 0 && (
-            <div className="bg-white border-l-4 border-amber-500/70 p-6 rounded-xl shadow-sm">
+            <div className="bg-white border-l-4 border-brand/30 p-6 rounded-xl shadow-sm">
               <h3 className="font-display text-xl font-bold mb-4 text-dark flex items-center gap-2">
-                <Target className="w-5 h-5 text-dark/40 shrink-0" />
+                <Target className="w-5 h-5 text-gold shrink-0" />
                 Deyimler für dich
               </h3>
               <div className="space-y-3">
                 {analysis.suggested_deyimler.map((d, i) => (
-                  <div key={i} className="bg-cream/50 p-4 rounded-btn">
-                    <p className="font-bold text-dark mb-1 font-sans">{d.deyim}</p>
-                    <p className="text-gray-700 mb-1 flex items-start gap-1.5 font-sans text-sm">
-                      <BookOpen className="w-4 h-4 text-dark/40 shrink-0 mt-0.5" />
-                      {d.meaning_de}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-2 flex items-start gap-1.5 font-sans">
-                      <Lightbulb className="w-4 h-4 text-dark/40 shrink-0 mt-0.5" />
-                      {d.usage}
-                    </p>
-                    <p className="text-sm bg-white/60 p-2 rounded-btn italic font-sans">{d.example_in_context}</p>
+                  <div
+                    key={i}
+                    className="border border-cream-dark/20 rounded-xl p-4 flex flex-col sm:flex-row sm:items-start gap-4 bg-white"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-dark font-sans text-base">{d.deyim}</p>
+                      <p className="text-dark/80 text-sm font-sans mt-1 flex items-start gap-1.5">
+                        <BookOpen className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+                        {d.meaning_de}
+                      </p>
+                      <p className="text-dark/60 text-sm font-sans mt-1 flex items-start gap-1.5">
+                        <Lightbulb className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+                        {d.usage}
+                      </p>
+                    </div>
+                    <div className="sm:border-l sm:border-cream-dark/20 sm:pl-4 sm:min-w-[45%]">
+                      <p className="text-xs font-medium text-dark/50 uppercase tracking-wide mb-1 font-sans">
+                        Beispiel
+                      </p>
+                      <p className="text-dark/70 text-sm italic font-sans">{d.example_in_context}</p>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={() => {
-              setUserText('');
-              setAnalysis(null);
-            }}
-            className="btn w-full bg-green-600 text-white py-3 rounded-btn font-sans hover:bg-green-700 flex items-center justify-center gap-2"
-          >
-            <Check className="w-4 h-4 shrink-0" />
-            Neue Übung starten
-          </button>
+          <div className="flex justify-center pt-4">
+            <button
+              type="button"
+              onClick={() => {
+                setUserText('');
+                setAnalysis(null);
+              }}
+              className="rounded-full px-10 py-4 bg-dark text-white font-sans font-medium hover:bg-dark/90 transition-all flex items-center justify-center gap-2 text-base"
+            >
+              <Check className="w-5 h-5 shrink-0" />
+              Neue Übung starten
+            </button>
+          </div>
         </div>
       )}
     </div>
