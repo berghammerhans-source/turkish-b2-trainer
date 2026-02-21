@@ -45,51 +45,75 @@ export default function Dashboard() {
     );
   }
 
-  const navOpacity = writingFocused ? 'opacity-20' : 'opacity-100';
+  const navOpacity = writingFocused ? 'opacity-0 pointer-events-none' : 'opacity-100';
 
   return (
-    <div className="min-h-screen bg-cream flex font-sans">
-      {/* Sidebar – schmal, bg-cream, löst sich optisch im Hintergrund auf */}
+    <div
+      className="min-h-screen bg-cream flex font-sans relative"
+      style={{
+        backgroundImage: 'radial-gradient(rgba(26,10,14,0.05) 1px, transparent 1px)',
+        backgroundSize: '24px 24px',
+      }}
+    >
+      {/* Sidebar – minimal, nur Icons, verschwindet im Focus Mode */}
       <aside
-        className={`w-44 shrink-0 bg-cream flex flex-col transition-opacity duration-200 ${navOpacity}`}
+        className={`w-20 shrink-0 bg-cream flex flex-col transition-all duration-300 ${navOpacity}`}
       >
-        <div className="p-4 border-b border-dark/[0.06]">
-          <span className="font-display text-lg font-medium text-dark/35">Türkçe Pro</span>
+        <div className="p-3 border-b border-dark/[0.06]">
+          <span className="font-display text-sm font-medium text-dark/30 block truncate" aria-label="Türkçe Pro">
+            TP
+          </span>
         </div>
-        <nav className="flex-1 p-2 flex flex-col gap-0.5">
+        <nav className="flex-1 p-2 flex flex-col gap-1">
           {NAV_ITEMS.map(({ id, label, Icon }) => (
             <button
               key={id}
               type="button"
+              title={label}
               onClick={() => setActiveTab(id)}
-              className={`flex items-center gap-2.5 px-2.5 py-2 rounded-btn text-left text-sm font-medium transition-colors ${
+              className={`flex items-center justify-center p-2.5 rounded-btn transition-colors ${
                 activeTab === id
-                  ? 'bg-brand text-white'
-                  : 'text-dark/50 hover:bg-dark/[0.06] hover:text-dark/80'
+                  ? 'text-brand bg-brand/10'
+                  : 'text-dark/30 hover:bg-dark/[0.06] hover:text-dark/60'
               }`}
             >
-              <Icon className="w-4 h-4 shrink-0" />
-              {label}
+              <Icon className="w-5 h-5 shrink-0" />
             </button>
           ))}
         </nav>
-        <div className="p-2 border-t border-dark/[0.06]">
+        <div className="p-2 border-t border-dark/[0.06] space-y-2">
           <button
             type="button"
+            title="Abmelden"
             onClick={handleLogout}
-            className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-btn text-sm font-medium text-dark/50 hover:bg-dark/[0.06] hover:text-dark/80 transition-colors"
+            className="flex items-center justify-center w-full p-2.5 rounded-btn text-dark/30 hover:bg-dark/[0.06] hover:text-dark/60 transition-colors"
           >
-            <LogOut className="w-4 h-4 shrink-0" />
-            Abmelden
+            <LogOut className="w-5 h-5 shrink-0" />
           </button>
+          <p className="text-[10px] uppercase tracking-widest text-dark/30 text-center px-1">
+            Türkçe Pro v1.0
+          </p>
         </div>
       </aside>
 
-      {/* Main content */}
+      {/* Main content – bei Focus Mode Card zentrieren */}
       <main className="flex-1 min-w-0 flex flex-col">
-        <div className="max-w-4xl w-full mx-auto flex-1 px-4 sm:px-6 py-8 flex flex-col gap-8">
+        <div
+          className={`max-w-4xl w-full mx-auto flex-1 px-4 sm:px-6 py-8 flex flex-col gap-8 transition-all duration-300 ${
+            writingFocused && activeTab === 'writing'
+              ? 'justify-center items-center min-h-[calc(100vh-0px)]'
+              : ''
+          }`}
+        >
           {activeTab === 'writing' && (
-            <DailyWriting onWritingFocusChange={setWritingFocused} />
+            <div className="w-full relative">
+              {/* Feine vertikale Linie links neben der Card (nur Schreib-Ansicht) */}
+              <div
+                className="absolute left-0 top-0 bottom-0 w-px bg-dark/[0.06] hidden sm:block -ml-4 sm:-ml-6"
+                aria-hidden
+              />
+              <DailyWriting onWritingFocusChange={setWritingFocused} />
+            </div>
           )}
           {activeTab === 'mistakes' && <MistakeTracker />}
           {activeTab === 'history' && <ExerciseHistory />}

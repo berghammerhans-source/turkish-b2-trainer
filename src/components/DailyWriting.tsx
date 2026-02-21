@@ -113,7 +113,7 @@ export function DailyWriting({ onWritingFocusChange }: DailyWritingProps) {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="bg-white rounded-xl p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+      <div className="bg-white rounded-xl p-8 lg:p-16 border border-cream-dark/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
         <div className="pb-6 mb-6 border-b border-cream-dark/10">
           <h2 className="font-serif text-2xl text-dark font-semibold flex items-center gap-2">
             <PenLine className="w-6 h-6 text-gold shrink-0" />
@@ -166,20 +166,20 @@ export function DailyWriting({ onWritingFocusChange }: DailyWritingProps) {
           </div>
         )}
 
-        {/* Textfeld mit Wortzahl-Badge */}
-        <div className="relative mb-6">
+        {/* Textfeld – kein Rahmen/Schatten im Fokus, Schreib-Vibe */}
+        <div className="mb-1">
           <textarea
             value={userText}
             onChange={(e) => setUserText(e.target.value)}
             onFocus={() => onWritingFocusChange?.(true)}
             onBlur={() => onWritingFocusChange?.(false)}
-            className="w-full h-64 p-4 pr-20 rounded-btn border-0 bg-transparent text-lg leading-relaxed focus:ring-2 focus:ring-gold/40 outline-none font-sans resize-none"
+            className="w-full min-h-[280px] p-0 border-0 bg-transparent text-xl leading-[1.8] text-dark/80 focus:ring-0 focus:shadow-none outline-none font-sans resize-none placeholder:italic placeholder:font-serif placeholder:opacity-30"
             placeholder="Schreibe hier auf Türkisch..."
           />
-          <span className="absolute bottom-2 right-2 bg-dark/5 text-dark/50 text-xs px-2 py-1 rounded font-sans pointer-events-none">
-            {wordCount} Wörter
-          </span>
         </div>
+        <p className="text-[10px] tracking-wide opacity-40 text-dark/70 font-sans mb-6">
+          {wordCount} Wörter
+        </p>
 
         <div className="flex justify-end">
           <button
