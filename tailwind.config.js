@@ -12,10 +12,14 @@ module.exports = {
           dark: '#9B0022',
         },
         cream: '#FAF7F2',
+        'cream-dark': '#E8E4DF',
         dark: '#1A0A0E',
+        gold: '#C9960C',
       },
       fontFamily: {
         sans: ['DM Sans', 'sans-serif'],
+        display: ['Playfair Display', 'serif'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
       },
       borderRadius: {
         btn: '8px',

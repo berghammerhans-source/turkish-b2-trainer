@@ -1,5 +1,21 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import {
+  PenLine,
+  Dices,
+  Pencil,
+  Loader2,
+  Send,
+  AlertCircle,
+  Sparkles,
+  Briefcase,
+  MessageCircle,
+  GraduationCap,
+  Target,
+  BookOpen,
+  Lightbulb,
+  Check,
+} from 'lucide-react';
 
 interface WritingAnalysis {
   corrections: Array<{
@@ -97,49 +113,54 @@ export function DailyWriting({ onWritingFocusChange }: DailyWritingProps) {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="bg-white rounded-xl shadow-sm p-8">
-        <div className="bg-gradient-to-r from-brand to-brand-dark text-white p-6 rounded-xl mb-6">
-          <h2 className="text-2xl font-bold mb-2 font-sans">📝 Tägliche Schreibübung</h2>
-          <p className="text-white/90 font-sans">Schreibe mindestens 100 Wörter auf Türkisch</p>
+      <div className="bg-white rounded-xl p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+        <div className="pb-6 mb-6 border-b border-cream-dark/10">
+          <h2 className="font-serif text-2xl text-dark font-semibold flex items-center gap-2">
+            <PenLine className="w-6 h-6 text-gold shrink-0" />
+            Tägliche Schreibübung
+          </h2>
+          <p className="text-dark/60 text-sm font-sans mt-1">Schreibe mindestens 100 Wörter auf Türkisch</p>
         </div>
 
         {/* Topic selection */}
-        <div className="flex gap-4 mb-4 font-sans">
-          <label className="flex items-center gap-2 cursor-pointer">
+        <div className="flex gap-6 mb-4 font-sans">
+          <label className="flex items-center gap-2 cursor-pointer group">
             <input
               type="radio"
               checked={!useCustomTopic}
               onChange={() => setUseCustomTopic(false)}
-              className="w-4 h-4"
+              className="w-4 h-4 accent-gold text-gold"
             />
-            <span>🎲 Zufälliges Thema</span>
+            <Dices className={`w-4 h-4 shrink-0 transition-colors ${!useCustomTopic ? 'text-gold' : 'text-dark/40'}`} />
+            <span className={!useCustomTopic ? 'text-dark font-medium' : 'text-dark/70'}>Zufälliges Thema</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="radio"
               checked={useCustomTopic}
               onChange={() => setUseCustomTopic(true)}
-              className="w-4 h-4"
+              className="w-4 h-4 accent-gold text-gold"
             />
-            <span>✍️ Eigenes Thema</span>
+            <Pencil className={`w-4 h-4 shrink-0 transition-colors ${useCustomTopic ? 'text-gold' : 'text-dark/40'}`} />
+            <span className={useCustomTopic ? 'text-dark font-medium' : 'text-dark/70'}>Eigenes Thema</span>
           </label>
         </div>
 
         {/* Prompt */}
         {!useCustomTopic ? (
-          <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-btn font-sans">
-            <p className="font-semibold text-amber-800">Thema:</p>
-            <p className="text-amber-900">{prompt}</p>
+          <div className="bg-cream/50 border-l-4 border-gold/50 p-4 mb-6 rounded-btn font-sans">
+            <p className="font-semibold text-dark/80">Thema:</p>
+            <p className="text-dark/90">{prompt}</p>
           </div>
         ) : (
           <div className="mb-6">
-            <label className="block font-semibold text-amber-800 mb-2 font-sans">Dein Thema:</label>
+            <label className="block font-semibold text-dark/80 mb-2 font-sans">Dein Thema:</label>
             <input
               type="text"
               value={customTopic}
               onChange={(e) => setCustomTopic(e.target.value)}
               placeholder="z.B. Meine Reise nach Istanbul"
-              className="w-full p-4 border border-amber-300 rounded-btn bg-amber-50 focus:ring-2 focus:ring-brand focus:border-brand font-sans"
+              className="w-full p-4 border border-cream-dark/30 rounded-btn bg-cream/30 focus:ring-2 focus:ring-gold/40 focus:border-gold/50 font-sans outline-none"
               disabled={loading || analysis !== null}
             />
           </div>
@@ -152,7 +173,7 @@ export function DailyWriting({ onWritingFocusChange }: DailyWritingProps) {
             onChange={(e) => setUserText(e.target.value)}
             onFocus={() => onWritingFocusChange?.(true)}
             onBlur={() => onWritingFocusChange?.(false)}
-            className="w-full h-64 p-4 pr-20 rounded-btn border-0 shadow-inner bg-cream/50 focus:ring-2 focus:ring-brand outline-none font-sans resize-none"
+            className="w-full h-64 p-4 pr-20 rounded-btn border-0 bg-transparent text-lg leading-relaxed focus:ring-2 focus:ring-gold/40 outline-none font-sans resize-none"
             placeholder="Schreibe hier auf Türkisch..."
           />
           <span className="absolute bottom-2 right-2 bg-dark/5 text-dark/50 text-xs px-2 py-1 rounded font-sans pointer-events-none">
@@ -165,9 +186,19 @@ export function DailyWriting({ onWritingFocusChange }: DailyWritingProps) {
             type="button"
             onClick={handleSubmit}
             disabled={loading || analysis !== null}
-            className="btn bg-brand text-white px-6 py-2.5 rounded-btn font-sans font-medium hover:bg-brand-dark disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-full px-8 py-3 bg-brand text-white font-sans font-medium hover:shadow-lg hover:bg-brand-dark disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center gap-2 transition-all"
           >
-            {loading ? '⏳ Analysiere...' : '🚀 Analysieren'}
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                Analysiere...
+              </>
+            ) : (
+              <>
+                <Send className="w-4 h-4 shrink-0" />
+                Analysieren
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -177,8 +208,11 @@ export function DailyWriting({ onWritingFocusChange }: DailyWritingProps) {
         <div className="flex flex-col gap-8">
           {/* Corrections */}
           {analysis.corrections && analysis.corrections.length > 0 && (
-            <div className="bg-white border-l-4 border-red-500 p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold mb-4 text-red-700">🔴 Korrekturen ({analysis.corrections.length})</h3>
+            <div className="bg-white border-l-4 border-brand p-6 rounded-xl shadow-sm">
+              <h3 className="font-display text-xl font-bold mb-4 text-dark flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-dark/40 shrink-0" />
+                Korrekturen ({analysis.corrections.length})
+              </h3>
               <div className="space-y-3">
                 {analysis.corrections.map((c, i) => (
                   <div key={i} className="bg-red-50 p-3 rounded">
@@ -196,37 +230,55 @@ export function DailyWriting({ onWritingFocusChange }: DailyWritingProps) {
 
           {/* Variants */}
           {analysis.variants && (
-            <div className="bg-white border-l-4 border-red-500 p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold mb-4 text-red-700">✨ 3 Varianten</h3>
-              
+            <div className="bg-white border-l-4 border-brand p-6 rounded-xl shadow-sm">
+              <h3 className="font-display text-xl font-bold mb-4 text-dark flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-dark/40 shrink-0" />
+                3 Varianten
+              </h3>
               <div className="mb-4">
-                <h4 className="font-semibold text-gray-700 mb-2">💼 Business Formell:</h4>
-                <p className="bg-red-50 p-3 rounded">{analysis.variants.business_formal}</p>
+                <h4 className="font-sans font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+                  <Briefcase className="w-4 h-4 text-dark/40 shrink-0" />
+                  Business Formell
+                </h4>
+                <p className="bg-cream/50 p-3 rounded-btn font-sans">{analysis.variants.business_formal}</p>
               </div>
-
               <div className="mb-4">
-                <h4 className="font-semibold text-gray-700 mb-2">💬 Schlagfertig Alltag:</h4>
-                <p className="bg-green-50 p-3 rounded">{analysis.variants.colloquial_smart}</p>
+                <h4 className="font-sans font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+                  <MessageCircle className="w-4 h-4 text-dark/40 shrink-0" />
+                  Schlagfertig Alltag
+                </h4>
+                <p className="bg-cream/50 p-3 rounded-btn font-sans">{analysis.variants.colloquial_smart}</p>
               </div>
-
               <div>
-                <h4 className="font-semibold text-gray-700 mb-2">🎓 C1 Sophistiziert:</h4>
-                <p className="bg-amber-50 p-3 rounded">{analysis.variants.c1_sophisticated}</p>
+                <h4 className="font-sans font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+                  <GraduationCap className="w-4 h-4 text-dark/40 shrink-0" />
+                  C1 Sophistiziert
+                </h4>
+                <p className="bg-cream/50 p-3 rounded-btn font-sans">{analysis.variants.c1_sophisticated}</p>
               </div>
             </div>
           )}
 
           {/* Deyimler */}
           {analysis.suggested_deyimler && analysis.suggested_deyimler.length > 0 && (
-            <div className="bg-white border-l-4 border-amber-500 p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold mb-4 text-amber-800">🎯 Deyimler für dich</h3>
+            <div className="bg-white border-l-4 border-amber-500/70 p-6 rounded-xl shadow-sm">
+              <h3 className="font-display text-xl font-bold mb-4 text-dark flex items-center gap-2">
+                <Target className="w-5 h-5 text-dark/40 shrink-0" />
+                Deyimler für dich
+              </h3>
               <div className="space-y-3">
                 {analysis.suggested_deyimler.map((d, i) => (
-                  <div key={i} className="bg-amber-50 p-4 rounded">
-                    <p className="font-bold text-amber-900 mb-1">{d.deyim}</p>
-                    <p className="text-gray-700 mb-1">📖 {d.meaning_de}</p>
-                    <p className="text-sm text-gray-600 mb-2">💡 {d.usage}</p>
-                    <p className="text-sm bg-white p-2 rounded italic">{d.example_in_context}</p>
+                  <div key={i} className="bg-cream/50 p-4 rounded-btn">
+                    <p className="font-bold text-dark mb-1 font-sans">{d.deyim}</p>
+                    <p className="text-gray-700 mb-1 flex items-start gap-1.5 font-sans text-sm">
+                      <BookOpen className="w-4 h-4 text-dark/40 shrink-0 mt-0.5" />
+                      {d.meaning_de}
+                    </p>
+                    <p className="text-sm text-gray-600 mb-2 flex items-start gap-1.5 font-sans">
+                      <Lightbulb className="w-4 h-4 text-dark/40 shrink-0 mt-0.5" />
+                      {d.usage}
+                    </p>
+                    <p className="text-sm bg-white/60 p-2 rounded-btn italic font-sans">{d.example_in_context}</p>
                   </div>
                 ))}
               </div>
@@ -239,9 +291,10 @@ export function DailyWriting({ onWritingFocusChange }: DailyWritingProps) {
               setUserText('');
               setAnalysis(null);
             }}
-            className="btn w-full bg-green-600 text-white py-3 rounded-btn font-sans hover:bg-green-700"
+            className="btn w-full bg-green-600 text-white py-3 rounded-btn font-sans hover:bg-green-700 flex items-center justify-center gap-2"
           >
-            ✅ Neue Übung starten
+            <Check className="w-4 h-4 shrink-0" />
+            Neue Übung starten
           </button>
         </div>
       )}

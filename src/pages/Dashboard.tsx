@@ -49,42 +49,37 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-cream flex font-sans">
-      {/* Sidebar */}
+      {/* Sidebar – schmal, bg-cream, löst sich optisch im Hintergrund auf */}
       <aside
-        className={`w-56 shrink-0 bg-white border-r border-gray-200/80 flex flex-col transition-opacity duration-200 ${navOpacity}`}
+        className={`w-44 shrink-0 bg-cream flex flex-col transition-opacity duration-200 ${navOpacity}`}
       >
-        <div className="p-4 border-b border-gray-200/80">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-brand flex items-center justify-center">
-              <span className="text-white text-lg font-bold">TR</span>
-            </div>
-            <span className="text-lg font-bold text-dark">Turkish B1→C1</span>
-          </div>
+        <div className="p-4 border-b border-dark/[0.06]">
+          <span className="font-display text-lg font-medium text-dark/35">Türkçe Pro</span>
         </div>
-        <nav className="flex-1 p-3 flex flex-col gap-1">
+        <nav className="flex-1 p-2 flex flex-col gap-0.5">
           {NAV_ITEMS.map(({ id, label, Icon }) => (
             <button
               key={id}
               type="button"
               onClick={() => setActiveTab(id)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-btn text-left text-sm font-medium transition-colors ${
+              className={`flex items-center gap-2.5 px-2.5 py-2 rounded-btn text-left text-sm font-medium transition-colors ${
                 activeTab === id
                   ? 'bg-brand text-white'
-                  : 'text-dark/70 hover:bg-dark/5 hover:text-brand'
+                  : 'text-dark/50 hover:bg-dark/[0.06] hover:text-dark/80'
               }`}
             >
-              <Icon className="w-5 h-5 shrink-0" />
+              <Icon className="w-4 h-4 shrink-0" />
               {label}
             </button>
           ))}
         </nav>
-        <div className="p-3 border-t border-gray-200/80">
+        <div className="p-2 border-t border-dark/[0.06]">
           <button
             type="button"
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-btn text-sm font-medium text-dark/70 hover:bg-dark/5 hover:text-brand transition-colors"
+            className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-btn text-sm font-medium text-dark/50 hover:bg-dark/[0.06] hover:text-dark/80 transition-colors"
           >
-            <LogOut className="w-5 h-5 shrink-0" />
+            <LogOut className="w-4 h-4 shrink-0" />
             Abmelden
           </button>
         </div>
